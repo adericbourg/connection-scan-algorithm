@@ -1,5 +1,5 @@
-Connections scan algorithm
-==========================
+Connection scan algorithm
+=========================
 
 A Scala implementation based on [Capitaine Train's challenge](https://github.com/capitainetrain/csa-challenge). I'm using their own data (provided on their Git repository).
 
