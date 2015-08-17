@@ -1,3 +1,9 @@
+# Ignore big big file
+src/main/resources/bench_data_48h
+
+
+#
+
 *.class
 *.log
 
