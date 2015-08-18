@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 import scala.io.Source
 
 /**
@@ -9,18 +10,34 @@ case class CSA(timetable: Timetable) {
 
   private def loop(arrivalStation: Int): Unit = {
     var earliest = Int.MaxValue
-    timetable.connections.zipWithIndex.foreach { case (connection, index) =>
-      if (connection.departureTimestamp >= earliestArrival(connection.departureStation) &&
-        connection.arrivalTimestamp < earliestArrival(connection.arrivalStation)) {
-        earliestArrival(connection.arrivalStation) = connection.arrivalTimestamp
-        inConnection(connection.arrivalStation) = index
-        if (connection.arrivalStation == arrivalStation) {
-          earliest = Math.min(earliest, connection.arrivalTimestamp)
-        }
-      } else if (connection.arrivalTimestamp > earliest) {
-        return
+
+    @tailrec
+    def inner(conns: Seq[(Connection, Int)]): Unit = {
+      conns match {
+        case Seq() =>
+          ()
+        case (connection, index) +: _ if connection.arrivalTimestamp > earliest =>
+          ()
+        case (connection, index) +: tail =>
+          if (leavesAfterArrival(connection) && optimizesArrivalTime(connection)) {
+            earliestArrival(connection.arrivalStation) = connection.arrivalTimestamp
+            inConnection(connection.arrivalStation) = index
+            if (connection.arrivalStation == arrivalStation) {
+              earliest = Math.min(earliest, connection.arrivalTimestamp)
+            }
+          }
+          inner(tail)
       }
     }
+    inner(timetable.connections.zipWithIndex)
+  }
+
+  def leavesAfterArrival(connection: Connection): Boolean = {
+    connection.departureTimestamp >= earliestArrival(connection.departureStation)
+  }
+
+  def optimizesArrivalTime(connection: Connection): Boolean = {
+    connection.arrivalTimestamp < earliestArrival(connection.arrivalStation)
   }
 
   private def printResult(arrivalStation: Int): Unit = {
@@ -59,6 +76,6 @@ object CSA {
   def main(args: Array[String]) {
     val timetable = Timetable.parse(Source.fromFile("src/main/resources/bench_data_48h").getLines())
     val csa: CSA = CSA(timetable)
-    csa.compute(18641, 19955, 1)
+    csa.compute(29377, 29458, 0)
   }
 }
