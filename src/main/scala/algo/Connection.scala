@@ -1,3 +1,5 @@
+package algo
+
 case class Connection(departureStation: Int, arrivalStation: Int, departureTimestamp: Int, arrivalTimestamp: Int) {
   override def toString: String = {
     s"Departure: $departureStation@$departureTimestamp, Arrival: $arrivalStation@$arrivalTimestamp"

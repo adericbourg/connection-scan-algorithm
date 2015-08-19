@@ -1,3 +1,5 @@
+package algo
+
 import scala.annotation.tailrec
 import scala.io.Source
 

@@ -1,3 +1,5 @@
+package algo
+
 case class Timetable(connections: Seq[Connection])
 
 object Timetable {
