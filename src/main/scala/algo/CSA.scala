@@ -11,10 +11,9 @@ case class CSA(timetable: Timetable) {
   val earliestArrival = Array.fill[Int](CSA.MaxStations)(Int.MaxValue)
 
   private def loop(arrivalStation: Int): Unit = {
-    var earliest = Int.MaxValue
-
     @tailrec
-    def inner(conns: Seq[(Connection, Int)]): Unit = {
+    def inner(conns: Seq[(Connection, Int)], earliest: Int): Unit = {
+      var newEarliest = earliest
       conns match {
         case Seq() =>
           ()
@@ -25,13 +24,13 @@ case class CSA(timetable: Timetable) {
             earliestArrival(connection.arrivalStation) = connection.arrivalTimestamp
             inConnection(connection.arrivalStation) = index
             if (connection.arrivalStation == arrivalStation) {
-              earliest = Math.min(earliest, connection.arrivalTimestamp)
+              newEarliest = Math.min(earliest, connection.arrivalTimestamp)
             }
           }
-          inner(tail)
+          inner(tail, newEarliest)
       }
     }
-    inner(timetable.connections.zipWithIndex)
+    inner(timetable.connections.zipWithIndex, Int.MaxValue)
   }
 
   def leavesAfterArrival(connection: Connection): Boolean = {
@@ -78,6 +77,6 @@ object CSA {
   def main(args: Array[String]) {
     val timetable = Timetable.parse(Source.fromFile("src/main/resources/bench_data_48h").getLines())
     val csa: CSA = CSA(timetable)
-    csa.compute(29377, 29458, 0)
+    csa.compute(29377, 18650, 0)
   }
 }
