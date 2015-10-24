@@ -59,16 +59,36 @@ case class CSA(timetable: Timetable) {
     }
   }
 
-  def compute(departureStation: Int, arrivalStation: Int, departureTime: Int) = {
+  private def computeRoute(arrivalStation: Int): Seq[Connection] = {
+    inConnection(arrivalStation) match {
+      case Int.MaxValue =>
+        println("No solution")
+        Seq()
+      case _ => {
+        var route = Array[Connection]()
+        var lastConnectionIndex = inConnection(arrivalStation)
+        while (lastConnectionIndex != Int.MaxValue) {
+          val connection: Connection = timetable.connections(lastConnectionIndex)
+          route = route :+ connection
+          lastConnectionIndex = inConnection(connection.departureStation)
+        }
+        println(s"Solution found with ${route.length} connections")
+        route.reverse
+      }
+    }
+  }
+
+  def compute(departureStation: Int, arrivalStation: Int, departureTime: Int): Seq[Connection] = {
     earliestArrival(departureStation) = departureTime
 
     if (departureStation <= CSA.MaxStations && arrivalStation <= CSA.MaxStations) {
       loop(arrivalStation)
     }
 
-    printResult(arrivalStation)
+    val route = computeRoute(arrivalStation)
+    route.foreach(connection => println(connection.toString))
+    route
   }
-
 }
 
 object CSA {
