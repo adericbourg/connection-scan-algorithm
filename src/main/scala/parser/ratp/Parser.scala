@@ -99,7 +99,6 @@ object Parser {
     def loop(transfers: Iterable[Transfer], connections: List[Connection]): List[Connection] = {
       transfers match {
         case Nil => connections
-        case head :: Nil => connections
         case head :: tail =>
           val departureStop = head.fromStopId
           val arrivalStop = head.toStopId
