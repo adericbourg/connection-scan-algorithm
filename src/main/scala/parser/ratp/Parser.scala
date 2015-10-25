@@ -60,9 +60,14 @@ object Parser {
     val connections = (connectionsFromStopTimes ++ connectionsFromTransfers).toList.sortBy(_.arrivalTimestamp)
     val timetable = Timetable(connections)
 
-    val noisyLeGrand = 2532
+    val montparnasseBienvenue = 1827
     val voltaireLeonBlum = 1633
-    CSA(timetable, mergedGtfsData.stopsByStopId).compute(noisyLeGrand, voltaireLeonBlum, durationToTimestamp(Duration.ofHours(18)))
+    val start: Long = System.currentTimeMillis()
+
+    CSA(timetable, mergedGtfsData.stopsByStopId).compute(montparnasseBienvenue, voltaireLeonBlum, durationToTimestamp(Duration.ofHours(18)))
+
+    val elapsed = System.currentTimeMillis() - start
+    println(s"Solution found in $elapsed ms")
   }
 
   private def stopTimesToConnections(stopTimes: Iterable[StopTime]): Iterable[Connection] = {

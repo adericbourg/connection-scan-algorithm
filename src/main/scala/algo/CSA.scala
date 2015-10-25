@@ -85,6 +85,7 @@ case class CSA(timetable: Timetable, stopsByStopId: Map[Long, Stop]) {
     }
   }
 
+
   def compute(departureStation: Int, arrivalStation: Int, departureTime: Int): Seq[Connection] = {
     earliestArrival(departureStation) = departureTime
 
@@ -94,7 +95,20 @@ case class CSA(timetable: Timetable, stopsByStopId: Map[Long, Stop]) {
 
     val route = computeRoute(arrivalStation)
     route.foreach(printConnection)
+    printTransitTime(route)
     route
+  }
+
+  private def printTransitTime(route: Seq[Connection]) = {
+    route match {
+      case Nil => print("")
+      case _ => {
+        val departureTime = route.head.departureTimestamp
+        val arrivalTime = route.last.arrivalTimestamp
+        val transitTime = (arrivalTime - departureTime) / 60
+        println(s"Total transit time: $transitTime minutes")
+      }
+    }
   }
 }
 
