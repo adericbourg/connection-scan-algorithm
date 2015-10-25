@@ -7,6 +7,7 @@ import scala.io.Source
  * FIXME Rewrite this in a more functionnal way.
  */
 case class CSA(timetable: Timetable) {
+  // FIXME Replace this with a symbol table to handle ids > Int.MaxValue
   val inConnection = Array.fill[Int](CSA.MaxStations)(Int.MaxValue)
   val earliestArrival = Array.fill[Int](CSA.MaxStations)(Int.MaxValue)
 
