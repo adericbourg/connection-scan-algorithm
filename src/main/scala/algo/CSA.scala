@@ -1,12 +1,14 @@
 package algo
 
+import parser.ratp.Stop
+
 import scala.annotation.tailrec
 import scala.io.Source
 
 /**
  * FIXME Rewrite this in a more functionnal way.
  */
-case class CSA(timetable: Timetable) {
+case class CSA(timetable: Timetable, stopsByStopId: Map[Long, Stop]) {
   // FIXME Replace this with a symbol table to handle ids > Int.MaxValue
   val inConnection = Array.fill[Int](CSA.MaxStations)(Int.MaxValue)
   val earliestArrival = Array.fill[Int](CSA.MaxStations)(Int.MaxValue)
@@ -53,11 +55,15 @@ case class CSA(timetable: Timetable) {
           route = route :+ connection
           lastConnectionIndex = inConnection(connection.departureStation)
         }
-        route.reverse.foreach { connection =>
-          println(connection.toString)
-        }
+        route.reverse.foreach(printConnection)
       }
     }
+  }
+
+  def printConnection(connection: Connection): Unit = {
+    val departureStationName = stopsByStopId.get(connection.departureStation).map(s => s.stopName).getOrElse(connection.departureStation)
+    val arrivalStationName = stopsByStopId.get(connection.arrivalStation).map(s => s.stopName).getOrElse(connection.arrivalStation)
+    println(s"$departureStationName -> $arrivalStationName (from ${connection.departureTimestamp} to ${connection.arrivalTimestamp})")
   }
 
   private def computeRoute(arrivalStation: Int): Seq[Connection] = {
@@ -87,7 +93,7 @@ case class CSA(timetable: Timetable) {
     }
 
     val route = computeRoute(arrivalStation)
-    route.foreach(connection => println(connection.toString))
+    route.foreach(printConnection)
     route
   }
 }
@@ -97,7 +103,7 @@ object CSA {
 
   def main(args: Array[String]) {
     val timetable = Timetable.parse(Source.fromFile("src/main/resources/bench_data_48h").getLines())
-    val csa: CSA = CSA(timetable)
+    val csa: CSA = CSA(timetable, Map())
     csa.compute(29377, 18650, 0)
   }
 }

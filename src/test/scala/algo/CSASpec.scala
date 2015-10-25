@@ -16,7 +16,7 @@ class CSASpec extends Specification {
         Connection(3, arrivalStation, 3, 3)
       ))
 
-      val route = CSA(timetable).compute(departureStation, arrivalStation, departureTime)
+      val route = CSA(timetable, Map()).compute(departureStation, arrivalStation, departureTime)
 
       route.length mustEqual 3
 
@@ -36,7 +36,7 @@ class CSASpec extends Specification {
         Connection(3, 4, 2, 2)
       ))
 
-      val route = CSA(timetable).compute(departureStation, arrivalStation, 0)
+      val route = CSA(timetable, Map()).compute(departureStation, arrivalStation, 0)
 
       route must beEmpty
     }

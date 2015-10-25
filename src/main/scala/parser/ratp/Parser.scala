@@ -13,7 +13,7 @@ object Parser {
   case class GtfsData(name: String, routes: Iterable[Route], trips: Iterable[Trip], stops: Iterable[Stop], stopTimes: Iterable[StopTime], transfers: Iterable[Transfer]) {
     lazy val stopTimesByTripId = stopTimes.groupBy(_.tripId)
     lazy val stopTimesByStopId = stopTimes.groupBy(_.stopId)
-    lazy val stopsByStopId = stops.groupBy(_.stopId)
+    lazy val stopsByStopId: Map[Long, Stop] = stops.map(stop => stop.stopId -> stop)(collection.breakOut)
 
     override def toString: String = name
   }
@@ -62,7 +62,7 @@ object Parser {
 
     val noisyLeGrand = 2532
     val voltaireLeonBlum = 1633
-    CSA(timetable).compute(noisyLeGrand, voltaireLeonBlum, durationToTimestamp(Duration.ofHours(18)))
+    CSA(timetable, mergedGtfsData.stopsByStopId).compute(noisyLeGrand, voltaireLeonBlum, durationToTimestamp(Duration.ofHours(18)))
   }
 
   private def stopTimesToConnections(stopTimes: Iterable[StopTime]): Iterable[Connection] = {
