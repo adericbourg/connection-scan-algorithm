@@ -6,8 +6,8 @@ import scala.annotation.tailrec
 import scala.io.Source
 
 /**
- * FIXME Rewrite this in a more functionnal way.
- */
+  * FIXME Rewrite this in a more functionnal way.
+  */
 case class CSA(timetable: Timetable, stopsByStopId: Map[Long, Stop]) {
   // FIXME Replace this with a symbol table to handle ids > Int.MaxValue
   val inConnection = Array.fill[Int](CSA.MaxStations)(Int.MaxValue)
@@ -42,22 +42,6 @@ case class CSA(timetable: Timetable, stopsByStopId: Map[Long, Stop]) {
 
   def optimizesArrivalTime(connection: Connection): Boolean = {
     connection.arrivalTimestamp < earliestArrival(connection.arrivalStation)
-  }
-
-  private def printResult(arrivalStation: Int): Unit = {
-    inConnection(arrivalStation) match {
-      case Int.MaxValue => println("No solution")
-      case _ => {
-        var route = Array[Connection]()
-        var lastConnectionIndex = inConnection(arrivalStation)
-        while (lastConnectionIndex != Int.MaxValue) {
-          val connection: Connection = timetable.connections(lastConnectionIndex)
-          route = route :+ connection
-          lastConnectionIndex = inConnection(connection.departureStation)
-        }
-        route.reverse.foreach(printConnection)
-      }
-    }
   }
 
   def printConnection(connection: Connection): Unit = {
