@@ -57,7 +57,7 @@ object Parser {
     val connectionsFromStopTimes = mergedGtfsData.stopTimesByTripId.values.flatMap(stopTimesToConnections)
     val connectionsFromTransfers = transfersToConnections(mergedGtfsData)
 
-    val connections = (connectionsFromStopTimes ++ connectionsFromTransfers).toList.sortBy(_.arrivalTimestamp)
+    val connections = (connectionsFromStopTimes ++ connectionsFromTransfers).toList.sortBy(_.departureTimestamp)
     val timetable = Timetable(connections)
 
     val csa: CSA = CSA(timetable, mergedGtfsData.stopsByStopId)
